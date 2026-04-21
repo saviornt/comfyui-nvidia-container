@@ -2,7 +2,7 @@
 
 A minimal, production-ready Docker container for running the latest ComfyUI with NVIDIA GPU acceleration (CUDA-enabled PyTorch).
 
-This image builds ComfyUI directly from the official upstream repository at build time and is designed as a **drop-in replacement runtime environment** for local or server-based AI workflows.
+This image builds ComfyUI directly from their official GitHub repository at build time and is designed as a **drop-in replacement runtime environment** for local or server-based AI workflows.
 
 This is **not** a development container with custom abstractions or modifications,  nor intended for large-scale orchestration or multi-node cloud deployments. It is intended for end-users who want a clean, GPU-accelerated ComfyUI environment without the overhead of manual setup inside of a Docker container on their local machine or server.
 
