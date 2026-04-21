@@ -29,6 +29,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 RUN git clone https://github.com/Comfy-Org/ComfyUI-Manager.git \
     /ComfyUI/custom_nodes/ComfyUI-Manager
 
+# Install ComfyUI-Manager dependencies
+RUN pip install --no-cache-dir -r /ComfyUI/custom_nodes/ComfyUI-Manager/requirements.txt
+
 EXPOSE 8181
 
 CMD ["python3", "main.py", "--listen", "0.0.0.0", "--port", "8181"]
