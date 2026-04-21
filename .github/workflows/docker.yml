@@ -70,3 +70,11 @@ jobs:
           # BuildKit caching (recommended by Docker docs)
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+      # Perform a security scan of the built image
+      - name: Scan built image
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ghcr.io/saviornt/comfyui-nvidia-container:latest
+          format: table
+          exit-code: 0

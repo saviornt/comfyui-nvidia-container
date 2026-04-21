@@ -1,0 +1,83 @@
+name: Security Audit
+
+on:
+    schedule:
+        - cron: "0 3 * * *" # daily
+    workflow_dispatch:
+
+permissions:
+    contents: write
+    security-events: write
+
+jobs:
+    scan:
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v4
+
+            # Container vulnerability scan
+            - name: Run Trivy scan
+              uses: aquasecurity/trivy-action@master
+              with:
+                  scan-type: fs
+                  format: json
+                  output: trivy.json
+                  exit-code: 0
+
+            # Python dependency audit
+            - name: Run pip audit
+              run: |
+                  pip install pip-audit
+                  pip-audit -r requirements.txt -f json -o pip-audit.json || true
+
+            # Create issue if vulnerabilities found
+            - name: Check for vulnerabilities
+              id: vuln
+              run: |
+                  if [ -s trivy.json ] || [ -s pip-audit.json ]; then
+                  echo "found=true" >> $GITHUB_OUTPUT
+                  else
+                  echo "found=false" >> $GITHUB_OUTPUT
+                  fi
+
+            - name: Create issue ticket
+              if: steps.vuln.outputs.found == 'true'
+              uses: actions/github-script@v7
+              with:
+                  script: |
+                      const fs = require('fs');
+
+                      // Check for existing open security issues
+                      const existing = await github.rest.issues.listForRepo({
+                          owner: context.repo.owner,
+                          repo: context.repo.repo,
+                          state: "open",
+                          labels: "security"
+                      });
+
+                      if (existing.data.length > 0) {
+                          console.log("Security issue already exists. Skipping creation.");
+                          return;
+                      }
+
+                      // Build issue body with scan results
+                      let body = "## Security Scan Results\n\n";
+
+                      if (fs.existsSync('trivy.json')) {
+                          body += "### Trivy Results\n";
+                          body += fs.readFileSync('trivy.json', 'utf8') + "\n\n";
+                      }
+
+                      if (fs.existsSync('pip-audit.json')) {
+                          body += "### pip-audit Results\n";
+                          body += fs.readFileSync('pip-audit.json', 'utf8') + "\n\n";
+                      }
+
+                      await github.rest.issues.create({
+                          owner: context.repo.owner,
+                          repo: context.repo.repo,
+                          title: "Security vulnerabilities detected",
+                          body: body,
+                          labels: ["security"]
+                      });
