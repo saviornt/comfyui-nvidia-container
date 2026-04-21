@@ -58,15 +58,6 @@ jobs:
             type=semver,pattern={{major}}.{{minor}}
             type=semver,pattern={{major}}
 
-      # Sync GitHub README with Docker Hub Overview
-      - name: Sync Docker Hub README
-        uses: peter-evans/dockerhub-description@v5
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-          repository: davidwadsworth80/comfyui-nvidia-container
-          readme-filepath: README.md
-
       # Build and push image
       - name: Build and push Docker image
         uses: docker/build-push-action@v7
