@@ -25,8 +25,9 @@ RUN pip install --no-cache-dir \
 # Install ComfyUI dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY scripts/start.sh /start.sh
-RUN chmod +x /start.sh
+# Install ComfyUI-Manager
+RUN git clone https://github.com/Comfy-Org/ComfyUI-Manager.git \
+    /ComfyUI/custom_nodes/ComfyUI-Manager
 
 EXPOSE 8181
 

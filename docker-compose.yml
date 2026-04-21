@@ -4,7 +4,7 @@ services:
     container_name: comfyui
     restart: unless-stopped
     ports:
-      - "8188:8188"
+      - "8181:8181"
     volumes:
       - comfyui:/ComfyUI
     gpus: all

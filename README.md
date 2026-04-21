@@ -13,7 +13,7 @@ This is **not** a development container with custom abstractions or modification
 - 🧠 Latest ComfyUI pulled from upstream GitHub at build time
 - ⚡ NVIDIA GPU acceleration (CUDA-enabled PyTorch)
 - 📦 Persistent model, input, output, and custom node storage
-- 🔌 Standard ComfyUI port (8188)
+- 🔌 Standard ComfyUI port (8181)
 - 🧱 Clean upstream-compatible directory structure (no custom abstraction layers)
 - 🐳 Designed for Docker Compose and standalone `docker run` usage
 
@@ -46,14 +46,14 @@ docker run --rm --gpus all nvidia/cuda:13.2.0-base-ubuntu22.04 nvidia-smi
 Run with Docker
 
 ```bash
-docker run --gpus all -p 8188:8188 \
+docker run --gpus all -p 8181:8181 \
   -v comfyui:/ComfyUI \
   saviornt/comfyui-nvidia-container:latest
 ```
 
 Then open:
 
-`http://localhost:8188`
+`http://localhost:8181`
 
 ---
 
@@ -64,7 +64,7 @@ services:
   comfyui:
     image: saviornt/comfyui-nvidia-container:latest
     ports:
-      - "8188:8188"
+      - "8181:8181"
     volumes:
       - comfyui:/ComfyUI
     gpus: all
@@ -105,11 +105,11 @@ On build:
 - Clones the latest ComfyUI from official GitHub
 - Installs PyTorch with CUDA support
 - Installs ComfyUI dependencies
-- Exposes ComfyUI on port 8188
+- Exposes ComfyUI on port 8181
 
 At runtime:
 
-- Starts ComfyUI listening on 0.0.0.0:8188
+- Starts ComfyUI listening on 0.0.0.0:8181
 - Uses mounted volume for all persistent data
 
 ---
@@ -175,7 +175,7 @@ pip install -r requirements.txt
 
 ## 🧠 General Notes
 
-- Internal ComfyUI port is fixed at 8188
+- Internal ComfyUI port is fixed at 8181
 - External port can be changed via Docker mapping
 - GPU access requires NVIDIA Container Toolkit on the host system
 - This container is designed for local runtime inference workflows, not development or cloud-based production builds
