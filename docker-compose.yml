@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   comfyui:
     build: .
@@ -8,20 +6,8 @@ services:
     ports:
       - "8188:8188"
     volumes:
-      - models:/ComfyUI/models
-      - input:/ComfyUI/input
-      - output:/ComfyUI/output
-      - custom_nodes:/ComfyUI/custom_nodes
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities: [ gpu ]
+      - comfyui:/ComfyUI
+    gpus: all
 
 volumes:
-  input:
-  output:
-  models:
-  custom_nodes:
+  comfyui:
