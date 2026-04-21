@@ -1,4 +1,4 @@
-# ComfyUI NVIDIA CUDA Container
+# ComfyUI NVIDIA Container
 
 A minimal, production-ready Docker container for running the latest ComfyUI with NVIDIA GPU acceleration (CUDA-enabled PyTorch).
 
