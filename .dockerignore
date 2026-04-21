@@ -1,0 +1,11 @@
+.git
+.gitignore
+README.md
+docker-compose.yml
+node_modules
+__pycache__
+*.log
+*.tmp
+models/
+output/
+input/
