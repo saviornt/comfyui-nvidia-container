@@ -1,0 +1,116 @@
+name: Check Upstream Updates
+
+on:
+    schedule:
+        - cron: "0 */6 * * *"
+    workflow_dispatch:
+
+permissions:
+    contents: write
+
+jobs:
+    check:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout repo
+              uses: actions/checkout@v4
+
+            # Get ComfyUI latest tag
+            - name: Get ComfyUI version
+              id: comfyui
+              run: |
+                  LATEST=$(git ls-remote --tags https://github.com/comfyanonymous/ComfyUI.git \
+                    | awk -F/ '{print $3}' \
+                    | grep -v '{}' \
+                    | sort -V \
+                    | tail -n1)
+
+                  echo "latest=$LATEST" >> $GITHUB_OUTPUT
+
+            # Get ComfyUI-Manager HEAD SHA
+            - name: Get Manager commit
+              id: manager
+              run: |
+                  LATEST=$(git ls-remote https://github.com/ltdrdata/ComfyUI-Manager.git refs/heads/main \
+                    | cut -f1)
+
+                  echo "latest=$LATEST" >> $GITHUB_OUTPUT
+
+            # Load state
+            - name: Load state
+              id: state
+              run: |
+                  if [ ! -f .upstream.json ]; then
+                    echo '{}' > .upstream.json
+                  fi
+
+                  echo "content<<EOF" >> $GITHUB_OUTPUT
+                  cat .upstream.json >> $GITHUB_OUTPUT
+                  echo "EOF" >> $GITHUB_OUTPUT
+
+            # Detect changes
+            - name: Detect changes
+              id: diff
+              run: |
+                  COMFYUI="${{ steps.comfyui.outputs.latest }}"
+                  MANAGER="${{ steps.manager.outputs.latest }}"
+
+                  OLD_COMFYUI=$(jq -r .comfyui .upstream.json)
+                  OLD_MANAGER=$(jq -r .manager .upstream.json)
+
+                  COMFYUI_CHANGED=false
+                  MANAGER_CHANGED=false
+
+                  if [ "$COMFYUI" != "$OLD_COMFYUI" ]; then
+                    COMFYUI_CHANGED=true
+                  fi
+
+                  if [ "$MANAGER" != "$OLD_MANAGER" ]; then
+                    MANAGER_CHANGED=true
+                  fi
+
+                  echo "comfyui_changed=$COMFYUI_CHANGED" >> $GITHUB_OUTPUT
+                  echo "manager_changed=$MANAGER_CHANGED" >> $GITHUB_OUTPUT
+
+            # Semantic version bump
+            - name: Bump version
+              id: version
+              run: |
+                  VERSION=$(jq -r .version .upstream.json)
+
+                  IFS='.' read MAJOR MINOR PATCH <<< "$VERSION"
+
+                  if [ "${{ steps.diff.outputs.manager_changed }}" = "true" ] || \
+                     [ "${{ steps.diff.outputs.comfyui_changed }}" = "true" ]; then
+                    PATCH=$((PATCH + 1))
+                  fi
+
+                  NEW_VERSION="$MAJOR.$MINOR.$PATCH"
+
+                  echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
+
+            # Update JSON
+            - name: Update state file
+              run: |
+                  jq \
+                    --arg comfyui "${{ steps.comfyui.outputs.latest }}" \
+                    --arg manager "${{ steps.manager.outputs.latest }}" \
+                    --arg version "${{ steps.version.outputs.version }}" \
+                    '
+                    .comfyui=$comfyui |
+                    .manager=$manager |
+                    .version=$version
+                    ' .upstream.json > tmp.json
+
+                  mv tmp.json .upstream.json
+
+            # Commit changes (triggers build)
+            - name: Commit update
+              run: |
+                  git config user.name "github-actions"
+                  git config user.email "github-actions@github.com"
+
+                  git add .upstream.json
+                  git commit -m "chore: upstream update → ${{ steps.version.outputs.version }}" || exit 0
+                  git push
