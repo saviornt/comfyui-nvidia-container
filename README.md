@@ -10,7 +10,7 @@ This is **not** a development container with custom abstractions or modification
 
 ## 🚀 Features
 
-- 🧠 Latest ComfyUI pulled from upstream GitHub at build time
+- 🧠 Latest ComfyUI pulled from latest GitHub release at build time
 - ⚡ NVIDIA GPU acceleration (CUDA-enabled PyTorch)
 - 📦 Persistent model, input, output, and custom node storage
 - 🔌 Standard ComfyUI port (8181)
