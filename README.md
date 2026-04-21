@@ -198,8 +198,6 @@ If this project saves you time or helps your workflow, consider supporting its d
 
 ⭐ Star the repository (helps visibility)
 
-💸 GitHub Sponsors: `https://github.com/sponsors/saviornt`
+💸 [GitHub Sponsorship](https://github.com/sponsors/saviornt)
 
-<a href="https://www.buymeacoffee.com/davidwadswq" target="_blank">
-<img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=☕&slug=davidwadswq&button_colour=FFDD00&font_colour=000000&font_family=Cookie&outline_colour=000000&coffee_colour=ffffff" />
-</a>
+☕ [Buy Me a Coffee](https://www.buymeacoffee.com/davidwadswq)
