@@ -1,8 +1,8 @@
 {
   "comfyui": "v0.22.3",
-  "manager": "d6f480c911d0b98b4a9f4871f263d90a15f0d9d2",
+  "manager": "56a54117ab6b3d59a7babd30dc924d9531e9562c",
   "cuda_base": "13.2",
-  "version": "1.0.37",
+  "version": "1.0.38",
   "last_changed": {
     "comfyui": false,
     "manager": false,
